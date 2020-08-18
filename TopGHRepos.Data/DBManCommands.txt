@@ -1,0 +1,13 @@
+﻿== NET 3: Tools ==
+cd <Project>
+dotnet new tool-manifest (if no manifest)
+dotnet tool install dotnet-ef (install dotnet-ef)
+dotnet tool restore (restores tools form .config/dotnet-tools.json)
+
+==================
+// cd <Project>
+dotnet ef migrations add InitialCreate
+
+// dotnet ef database update
+
+dotnet ef migrations remove
