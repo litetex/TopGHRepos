@@ -22,6 +22,8 @@ namespace TopGHRepos.CMD.Tasks
 
       protected GitHubClient GitHubClient { get; set; }
 
+      protected int SearchWaitInterval { get; set; } = Configuration.SearchWaitIntervalWithoutToken;
+
 
       private readonly object _lockRateLimit = new object();
 
@@ -39,6 +41,21 @@ namespace TopGHRepos.CMD.Tasks
          GitHubClient = new GitHubClient(new ProductHeaderValue("Search-Unsafe-Links-Crawler"));
          if (config.GitHubToken != null)
             GitHubClient.Credentials = new Credentials(config.GitHubToken);
+
+
+         ConfigureSearchWaitInterval();
+         Log.Info($"SearchWaitInterval is {SearchWaitInterval}ms");
+      }
+
+      protected void ConfigureSearchWaitInterval()
+      {
+         if (Config.SearchWaitInterval.HasValue)
+         {
+            SearchWaitInterval = Config.SearchWaitInterval.Value;
+            return;
+         }
+
+         SearchWaitInterval = !string.IsNullOrWhiteSpace(Config.GitHubToken) ? Configuration.SearchWaitIntervalWithToken : Configuration.SearchWaitIntervalWithoutToken;
       }
 
       public async Task Run()
@@ -131,7 +148,7 @@ namespace TopGHRepos.CMD.Tasks
             });
             searchTasks.Add(searchTask);
 
-            Thread.Sleep(Config.SearchWaitInterval);
+            Thread.Sleep(SearchWaitInterval);
          }
 
          Log.Info("Waiting for all searchTasks to finish");
