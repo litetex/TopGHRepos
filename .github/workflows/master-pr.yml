@@ -24,7 +24,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
         
   build_variants:
-    name: Variants
+    name: Variant
     runs-on: ubuntu-latest
     needs: [build]
     strategy:
