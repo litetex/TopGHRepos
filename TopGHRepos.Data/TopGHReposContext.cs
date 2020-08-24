@@ -37,13 +37,11 @@ namespace TopGHRepos.Data
       public void DetachAllEntities()
       {
          var changedEntriesCopy = ChangeTracker.Entries()
-             .Where(e => e.State == EntityState.Added ||
-                         e.State == EntityState.Modified ||
-                         e.State == EntityState.Deleted)
+             .Where(e => e.State != EntityState.Detached)
              .ToList();
 
-         foreach (var entry in changedEntriesCopy)
-            entry.State = EntityState.Detached;
+         foreach (var entityEntry in changedEntriesCopy)
+            entityEntry.State = EntityState.Detached;
       }
 
       public override int SaveChanges()

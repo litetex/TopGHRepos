@@ -60,6 +60,7 @@ namespace TopGHRepos.CMD.Tasks
 
       public async Task<int> DoSearchBatch(int currentBatch, int minStars, DateTimeOffset runStart, DateTimeOffset lastBatchFinished)
       {
+         Log.Info($"Starting batch #{currentBatch}; with MinStars >= {minStars}");
          object lockTotalProcessedItems = new object();
          int lastBatchRepoStars = -1;
          int totalSearchedBatchItems = 0;
@@ -105,7 +106,7 @@ namespace TopGHRepos.CMD.Tasks
                   lastResult = searchResult;
 
                   if (currentSearchPage == spanningSearchTasks + 1)
-                     TrySetLastRepo(currentBatch, currentSearchPage, initalSearchResult, lastRepo => lastBatchRepoStars = lastRepo.StargazersCount);
+                     TrySetLastRepo(currentBatch, currentSearchPage, searchResult, lastRepo => lastBatchRepoStars = lastRepo.StargazersCount);
 
                   databaseProcessorTasks.Add(Task.Run(() =>
                   {
@@ -171,6 +172,8 @@ namespace TopGHRepos.CMD.Tasks
             lastBatchRepoStars++;
          }
 
+         Context.DetachAllEntities();
+
          return lastBatchRepoStars;
       }
 
@@ -182,7 +185,7 @@ namespace TopGHRepos.CMD.Tasks
             Page = page,
             SortField = RepoSearchSort.Stars,
             Order = SortDirection.Ascending,
-            PerPage = Config.SearchMinStars,
+            PerPage = 100,
          };
       }
 
