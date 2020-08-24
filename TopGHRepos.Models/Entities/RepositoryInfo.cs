@@ -28,25 +28,13 @@ namespace TopGHRepos.Models.Entities
       
       public string LicenseKey { get; set; }
 
-      public string LicenseApiUrl { get; set; }
-
       public int StargazersCount { get; set; }
 
       public int ForksCount { get; set; }
 
       public bool Fork { get; set; }
 
-      public string ApiUrl { get; set; }
-
       public string HtmlUrl { get; set; }
-
-      public string CloneUrl { get; set; }
-
-      public string GitUrl { get; set; }
-
-      public string SshUrl { get; set; }
-
-      public string SvnUrl { get; set; }
 
       public string MirrorUrl { get; set; }
 
@@ -58,8 +46,6 @@ namespace TopGHRepos.Models.Entities
 
       public string Name { get; set; }
 
-      public string FullName { get; set; }
-
       public bool IsTemplate { get; set; }
 
       public string Description { get; set; }
@@ -67,8 +53,6 @@ namespace TopGHRepos.Models.Entities
       public string Homepage { get; set; }
 
       public string Language { get; set; }
-
-      public bool Private { get; set; }
 
       public long Size { get; set; }
 
