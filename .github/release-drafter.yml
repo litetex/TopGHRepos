@@ -1,0 +1,9 @@
+branches:
+  - master
+  - master-release-test
+name-template: "v$NEXT_PATCH_VERSION"
+tag-template: "v$NEXT_PATCH_VERSION"
+template: |
+  ## Changes
+  
+  $CHANGES
