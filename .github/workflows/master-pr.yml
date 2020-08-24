@@ -1,0 +1,57 @@
+name: Master PR CI
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Base
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1
+      
+    - name: Install dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+        
+  build_variants:
+    name: Variant
+    runs-on: ubuntu-latest
+    needs: [build]
+    strategy:
+      matrix:
+        os: [win-x64, linux-x64, osx-x64]
+        configuration: [Release]
+        project: [TopGHRepos.CMD]
+    
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1
+        
+    - name: Publish ${{ matrix.os }} ${{ matrix.configuration }} - dotnet publish 
+      working-directory: ${{ matrix.project }}
+      run: dotnet publish -c ${{ matrix.configuration }} -r ${{ matrix.os }} /p:PublishSingleFile=true
+
+      #Ignore pdb files
+    - name: Pack ${{ matrix.os }} - Zip
+      working-directory: ${{ matrix.project }}/bin/${{ matrix.configuration }}/netcoreapp3.1/${{ matrix.os }}/publish/
+      run: zip -r ${{ matrix.project }}.zip . -x \*.pdb
+
+    - name: Upload ${{ matrix.os }} - Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ matrix.project }}-${{ matrix.os }}.zip
+        path: ${{ matrix.project }}/bin/${{ matrix.configuration }}/netcoreapp3.1/${{ matrix.os }}/publish/${{ matrix.project }}.zip
