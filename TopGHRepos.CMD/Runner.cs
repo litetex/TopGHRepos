@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualBasic;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using Octokit;
 using System;
 using System.Collections.Generic;
@@ -21,17 +22,31 @@ namespace TopGHRepos.CMD
    {
       protected Configuration Config { get; set; }
 
-      protected TopGHReposContext Context { get; set; }
-
-      public Runner(Configuration config, TopGHReposContext context)
+      public Runner(Configuration config)
       {
          Config = config;
-         Context = context;
       }
 
       public async Task Run()
       {
-         await new GetReposFromGH(Config, Context).Run();
+         var optBuilder = new DbContextOptionsBuilder<TopGHReposContext>();
+         optBuilder.UseSqlite($"Data Source={Config.SQLLiteOutputFile}");
+
+         using var context = new TopGHReposContext(optBuilder.Options);
+
+         Log.Info("Ensuring db is deleted");
+         context.Database.EnsureDeleted();
+         Log.Info("db is deleted");
+
+         Log.Info($"Doing {context.Database.GetPendingMigrations().Count()} pending database migrations");
+         context.Database.Migrate();
+         Log.Info($"Migration successful");
+
+         await new GetReposFromGH(Config, context).Run();
+
+         Log.Info("Saving changes before shutting down");
+         context.SaveChanges();
+         Log.Info("Saved changes");
       }
 
    }

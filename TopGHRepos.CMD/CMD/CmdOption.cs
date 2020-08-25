@@ -22,5 +22,8 @@ namespace TopGHRepos.CMD.CMD
       [Option("searchwaitinterval")]
       public int? SearchWaitInterval { get; set; }
 
+      [Option("sqllitefile")]
+      public string SQLLiteOutputFile { get; set; }
+
    }
 }

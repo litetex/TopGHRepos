@@ -44,6 +44,12 @@ namespace TopGHRepos.CMD
             Config.GitHubToken = CmdOption.GITHUB_TOKEN;
          }
 
+         if(!string.IsNullOrWhiteSpace(CmdOption.SQLLiteOutputFile))
+         {
+            Log.Info($"SetInp: {nameof(Config.SQLLiteOutputFile)}='{CmdOption.SQLLiteOutputFile}'");
+            Config.SQLLiteOutputFile = CmdOption.SQLLiteOutputFile;
+         }
+
          if (CmdOption.MinStars != null)
          {
             Log.Info($"SetInp: {nameof(Config.SearchMinStars)}='{CmdOption.MinStars}'");
@@ -67,22 +73,9 @@ namespace TopGHRepos.CMD
 
       protected void DoStart()
       {
-         using (var context = new TopGHReposContext())
-         {
-            Log.Info("Ensuring db is deleted");
-            context.Database.EnsureDeleted();
-            Log.Info("db is deleted");
+         Log.Info("Starting...");
 
-            Log.Info($"Doing {context.Database.GetPendingMigrations().Count()} pending database migrations");
-            context.Database.Migrate();
-            Log.Info($"Migration successful");
-
-            new Runner(Config, context).Run().Wait();
-
-            Log.Info("Saving changes before shutting down");
-            context.SaveChanges();
-            Log.Info("Saved changes");
-         }
+         new Runner(Config).Run().Wait();
 
          Log.Info("Shutting down");
       }

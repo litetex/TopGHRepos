@@ -12,10 +12,6 @@ namespace TopGHRepos.Data
 {
    public class TopGHReposContext : DbContext
    {
-      public TopGHReposContext()
-      {
-      }
-
       public TopGHReposContext(DbContextOptions<TopGHReposContext> options) : base(options) { }
 
       public virtual DbSet<RepositoryInfo> RepositoryInfos { get; set; }
@@ -29,7 +25,6 @@ namespace TopGHRepos.Data
       protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
       {
          optionsBuilder.UseLazyLoadingProxies();
-         optionsBuilder.UseSqlite($"Data Source=database.sqlite");
 
          base.OnConfiguring(optionsBuilder);
       }
