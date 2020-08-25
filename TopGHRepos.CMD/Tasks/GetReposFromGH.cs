@@ -22,6 +22,8 @@ namespace TopGHRepos.CMD.Tasks
 
       protected GitHubClient GitHubClient { get; set; }
 
+      protected int SearchWaitInterval { get; set; } = Configuration.SearchWaitIntervalWithoutToken;
+
 
       private readonly object _lockRateLimit = new object();
 
@@ -39,6 +41,21 @@ namespace TopGHRepos.CMD.Tasks
          GitHubClient = new GitHubClient(new ProductHeaderValue("Search-Unsafe-Links-Crawler"));
          if (config.GitHubToken != null)
             GitHubClient.Credentials = new Credentials(config.GitHubToken);
+
+
+         ConfigureSearchWaitInterval();
+         Log.Info($"SearchWaitInterval is {SearchWaitInterval}ms");
+      }
+
+      protected void ConfigureSearchWaitInterval()
+      {
+         if (Config.SearchWaitInterval.HasValue)
+         {
+            SearchWaitInterval = Config.SearchWaitInterval.Value;
+            return;
+         }
+
+         SearchWaitInterval = !string.IsNullOrWhiteSpace(Config.GitHubToken) ? Configuration.SearchWaitIntervalWithToken : Configuration.SearchWaitIntervalWithoutToken;
       }
 
       public async Task Run()
@@ -60,6 +77,7 @@ namespace TopGHRepos.CMD.Tasks
 
       public async Task<int> DoSearchBatch(int currentBatch, int minStars, DateTimeOffset runStart, DateTimeOffset lastBatchFinished)
       {
+         Log.Info($"Starting batch #{currentBatch}; with MinStars >= {minStars}");
          object lockTotalProcessedItems = new object();
          int lastBatchRepoStars = -1;
          int totalSearchedBatchItems = 0;
@@ -105,7 +123,7 @@ namespace TopGHRepos.CMD.Tasks
                   lastResult = searchResult;
 
                   if (currentSearchPage == spanningSearchTasks + 1)
-                     TrySetLastRepo(currentBatch, currentSearchPage, initalSearchResult, lastRepo => lastBatchRepoStars = lastRepo.StargazersCount);
+                     TrySetLastRepo(currentBatch, currentSearchPage, searchResult, lastRepo => lastBatchRepoStars = lastRepo.StargazersCount);
 
                   databaseProcessorTasks.Add(Task.Run(() =>
                   {
@@ -130,7 +148,7 @@ namespace TopGHRepos.CMD.Tasks
             });
             searchTasks.Add(searchTask);
 
-            Thread.Sleep(Config.SearchWaitInterval);
+            Thread.Sleep(SearchWaitInterval);
          }
 
          Log.Info("Waiting for all searchTasks to finish");
@@ -171,6 +189,8 @@ namespace TopGHRepos.CMD.Tasks
             lastBatchRepoStars++;
          }
 
+         Context.DetachAllEntities();
+
          return lastBatchRepoStars;
       }
 
@@ -182,7 +202,7 @@ namespace TopGHRepos.CMD.Tasks
             Page = page,
             SortField = RepoSearchSort.Stars,
             Order = SortDirection.Ascending,
-            PerPage = Config.SearchMinStars,
+            PerPage = 100,
          };
       }
 
@@ -261,14 +281,11 @@ namespace TopGHRepos.CMD.Tasks
                   {
                      GitHubId = repo.Id,
                      Archived = repo.Archived,
-                     CloneUrl = repo.CloneUrl,
                      CreatedAt = repo.CreatedAt,
                      DefaultBranch = repo.DefaultBranch,
                      Description = repo.Description,
                      Fork = repo.Fork,
                      ForksCount = repo.ForksCount,
-                     FullName = repo.FullName,
-                     GitUrl = repo.GitUrl,
                      HasDownloads = repo.HasDownloads,
                      HasIssues = repo.HasIssues,
                      HasPages = repo.HasPages,
@@ -278,20 +295,15 @@ namespace TopGHRepos.CMD.Tasks
                      IsTemplate = repo.IsTemplate,
                      Language = repo.Language,
                      LicenseKey = repo.License?.Key,
-                     LicenseApiUrl = repo.License?.Url,
                      MirrorUrl = repo.MirrorUrl,
                      Name = repo.Name,
                      NodeId = repo.NodeId,
                      OpenIssuesCount = repo.OpenIssuesCount,
                      OwnerLoginName = repo.Owner.Login,
-                     Private = repo.Private,
                      PushedAt = repo.PushedAt,
                      Size = repo.Size,
-                     SshUrl = repo.SshUrl,
                      StargazersCount = repo.StargazersCount,
-                     SvnUrl = repo.SvnUrl,
                      UpdatedAt = repo.UpdatedAt,
-                     ApiUrl = repo.Url,
                      WatchersCount = repo.WatchersCount
                   };
 

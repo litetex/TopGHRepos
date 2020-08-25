@@ -9,7 +9,7 @@ using TopGHRepos.Data;
 namespace TopGHRepos.Data.Migrations
 {
     [DbContext(typeof(TopGHReposContext))]
-    [Migration("20200817185444_InitialCreate")]
+    [Migration("20200824201437_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,14 +24,8 @@ namespace TopGHRepos.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ApiUrl")
-                        .HasColumnType("TEXT");
-
                     b.Property<bool>("Archived")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("CloneUrl")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("TEXT");
@@ -51,14 +45,8 @@ namespace TopGHRepos.Data.Migrations
                     b.Property<int>("ForksCount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("FullName")
-                        .HasColumnType("TEXT");
-
                     b.Property<long>("GitHubId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("GitUrl")
-                        .HasColumnType("TEXT");
 
                     b.Property<bool>("HasDownloads")
                         .HasColumnType("INTEGER");
@@ -84,9 +72,6 @@ namespace TopGHRepos.Data.Migrations
                     b.Property<string>("Language")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("LicenseApiUrl")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("LicenseKey")
                         .HasColumnType("TEXT");
 
@@ -107,23 +92,14 @@ namespace TopGHRepos.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Private")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTimeOffset?>("PushedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<long>("Size")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("SshUrl")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("StargazersCount")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("SvnUrl")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("TEXT");
