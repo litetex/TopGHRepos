@@ -28,9 +28,9 @@ namespace TopGHRepos.CMD
          Contract.Requires(CmdOption != null);
          Log.Info($"Current directory is '{Directory.GetCurrentDirectory()}'");
 
-         ReadCMDConfig();
-
          ReadEnvConfig();
+
+         ReadCMDConfig();
 
          DoStart();
       }
@@ -40,10 +40,10 @@ namespace TopGHRepos.CMD
       {
          Log.Info("Doing config over commandline-args");
 
-         if (!string.IsNullOrEmpty(CmdOption.GITHUB_TOKEN))
+         if (!string.IsNullOrEmpty(CmdOption.GITHUB_PAT))
          {
-            Log.Info($"SetInp: {nameof(Config.GitHubToken)}='****'");
-            Config.GitHubToken = CmdOption.GITHUB_TOKEN;
+            Log.Info($"SetInp: {nameof(Config.GitHubPAT)}='****'");
+            Config.GitHubPAT = CmdOption.GITHUB_PAT;
          }
 
          if(!string.IsNullOrWhiteSpace(CmdOption.SQLLiteOutputFile))
@@ -69,16 +69,17 @@ namespace TopGHRepos.CMD
             Log.Info($"SetInp: {nameof(Config.SearchWaitInterval)}='{CmdOption.SearchWaitInterval}'");
             Config.SearchWaitInterval = CmdOption.SearchWaitInterval.Value;
          }
-
       }
 
       protected void ReadEnvConfig()
       {
-         var ghPat = Environment.GetEnvironmentVariable("GITHUB_PAT") ?? Environment.GetEnvironmentVariable("GH_PAT");
+         Log.Info("Doing config over environment variables");
+
+         var ghPat = Environment.GetEnvironmentVariable("GH_PAT");
          if (!string.IsNullOrWhiteSpace(ghPat))
          {
-            Log.Info($"SetEnv: {nameof(Config.GitHubToken)}='{ghPat}'");
-            Config.GitHubToken = ghPat;
+            Log.Info($"SetEnv: {nameof(Config.GitHubPAT)}='****'");
+            Config.GitHubPAT = ghPat;
          }
       }
 
