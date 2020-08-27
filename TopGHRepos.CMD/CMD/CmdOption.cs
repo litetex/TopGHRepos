@@ -10,8 +10,8 @@ namespace TopGHRepos.CMD.CMD
       [Option("logtofile")]
       public bool EnableLoggingToFile { get; set; } = false;
 
-      [Option("GITHUB_TOKEN")]
-      public string GITHUB_TOKEN { get; set; } = null;
+      [Option("GITHUB_PAT")]
+      public string GITHUB_PAT { get; set; } = null;
 
       [Option("minstars")]
       public int? MinStars { get; set; }

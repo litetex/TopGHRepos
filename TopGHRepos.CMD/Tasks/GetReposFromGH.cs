@@ -39,8 +39,8 @@ namespace TopGHRepos.CMD.Tasks
          Context = context;
 
          GitHubClient = new GitHubClient(new ProductHeaderValue("Search-Unsafe-Links-Crawler"));
-         if (config.GitHubToken != null)
-            GitHubClient.Credentials = new Credentials(config.GitHubToken);
+         if (config.GitHubPAT != null)
+            GitHubClient.Credentials = new Credentials(config.GitHubPAT);
 
 
          ConfigureSearchWaitInterval();
@@ -55,7 +55,7 @@ namespace TopGHRepos.CMD.Tasks
             return;
          }
 
-         SearchWaitInterval = !string.IsNullOrWhiteSpace(Config.GitHubToken) ? Configuration.SearchWaitIntervalWithToken : Configuration.SearchWaitIntervalWithoutToken;
+         SearchWaitInterval = !string.IsNullOrWhiteSpace(Config.GitHubPAT) ? Configuration.SearchWaitIntervalWithToken : Configuration.SearchWaitIntervalWithoutToken;
       }
 
       public async Task Run()

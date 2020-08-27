@@ -14,7 +14,7 @@ namespace TopGHRepos.CMD.Config
       // Without token: 10 Requests -> Wait ~6s -> 1000 Results / min
       public const int SearchWaitIntervalWithoutToken = 5950;
 
-      public string GitHubToken { get; set; }
+      public string GitHubPAT { get; set; }
 
       public int SearchMinStars { get; set; } = 1000;
 
