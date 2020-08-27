@@ -30,6 +30,8 @@ namespace TopGHRepos.CMD
 
          ReadCMDConfig();
 
+         ReadEnvConfig();
+
          DoStart();
       }
 
@@ -70,6 +72,15 @@ namespace TopGHRepos.CMD
 
       }
 
+      protected void ReadEnvConfig()
+      {
+         var ghPat = Environment.GetEnvironmentVariable("GITHUB_PAT") ?? Environment.GetEnvironmentVariable("GH_PAT");
+         if (!string.IsNullOrWhiteSpace(ghPat))
+         {
+            Log.Info($"SetEnv: {nameof(Config.GitHubToken)}='{ghPat}'");
+            Config.GitHubToken = ghPat;
+         }
+      }
 
       protected void DoStart()
       {
