@@ -38,7 +38,7 @@ namespace TopGHRepos.CMD.Tasks
          Config = config;
          Context = context;
 
-         GitHubClient = new GitHubClient(new ProductHeaderValue("Search-Unsafe-Links-Crawler"));
+         GitHubClient = new GitHubClient(new ProductHeaderValue("Top-Repos-Crawler"));
          if (config.GitHubPAT != null)
             GitHubClient.Credentials = new Credentials(config.GitHubPAT);
 
