@@ -54,7 +54,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Download Asset Upload URL - Download Artifact
-      uses: actions/download-artifact@v1
+      uses: actions/download-artifact@v2.0.5
       with:
         name: asset_upload_url
         path: temp_artf/asset_upload_url
