@@ -246,9 +246,9 @@ namespace TopGHRepos.CMD.Tasks
       private void WriteRateLimit(MiscellaneousRateLimit rateLimitInfo)
       {
          var coreRateLimit = rateLimitInfo.Resources.Core;
-         Log.Debug($"RateLimit (Core): {coreRateLimit.Remaining}/{coreRateLimit.Limit}; Reset at {coreRateLimit.Reset}");
+         Log.Debug($"RateLimit (Core): {coreRateLimit.Remaining}/{coreRateLimit.Limit}; Reset at {coreRateLimit.Reset:yyyy-MM-dd HH:mm:ss,fff}");
          var searchRateLimit = rateLimitInfo.Resources.Search;
-         Log.Info($"RateLimit (Search): {searchRateLimit.Remaining}/{searchRateLimit.Limit}; Reset at {searchRateLimit.Reset}");
+         Log.Info($"RateLimit (Search): {searchRateLimit.Remaining}/{searchRateLimit.Limit}; Reset at {searchRateLimit.Reset:yyyy-MM-dd HH:mm:ss,fff}");
       }
 
       private void TrySetLastRepo(int currentBatch, int currentPage, SearchRepositoryResult searchResult, Action<Repository> onLastRepo)
