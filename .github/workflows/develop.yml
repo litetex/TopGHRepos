@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ develop ]
 
+env:
+  DOTNET_VERSION: '5.0'
+  DOTNET_OUTPUT_FOLDER: net$DOTNET_VERSION
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,10 +20,13 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '5.0'
+        dotnet-version: $DOTNET_VERSION
       
     - name: Install dependencies
       run: dotnet restore
       
     - name: Build
       run: dotnet build --configuration Release --no-restore
+    
+    - name: Test
+      run: echo Version=$DOTNET_VERSION Folder=$DOTNET_OUTPUT_FOLDER
