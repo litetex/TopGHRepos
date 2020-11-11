@@ -15,7 +15,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1
+        dotnet-version: 5.0.x
       
     - name: Install dependencies
       run: dotnet restore
@@ -39,7 +39,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1
+        dotnet-version: 5.0.x
         
     - name: Publish ${{ matrix.os }} ${{ matrix.configuration }} - dotnet publish 
       working-directory: ${{ matrix.project }}
@@ -47,11 +47,11 @@ jobs:
 
       #Ignore pdb files
     - name: Pack ${{ matrix.os }} - Zip
-      working-directory: ${{ matrix.project }}/bin/${{ matrix.configuration }}/netcoreapp3.1/${{ matrix.os }}/publish/
+      working-directory: ${{ matrix.project }}/bin/${{ matrix.configuration }}/net5.0/${{ matrix.os }}/publish/
       run: zip -r ${{ matrix.project }}.zip . -x \*.pdb
 
     - name: Upload ${{ matrix.os }} - Upload Artifact
       uses: actions/upload-artifact@v2
       with:
         name: ${{ matrix.project }}-${{ matrix.os }}.zip
-        path: ${{ matrix.project }}/bin/${{ matrix.configuration }}/netcoreapp3.1/${{ matrix.os }}/publish/${{ matrix.project }}.zip
+        path: ${{ matrix.project }}/bin/${{ matrix.configuration }}/net5.0/${{ matrix.os }}/publish/${{ matrix.project }}.zip
