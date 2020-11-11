@@ -17,7 +17,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1
+        dotnet-version: 5.0
       
     - name: Install dependencies
       run: dotnet restore
@@ -47,7 +47,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1
+        dotnet-version: 5.0
         
     - name: Publish ${{ matrix.os }} ${{ matrix.configuration }} - dotnet publish 
       working-directory: ${{ matrix.project }}
@@ -55,7 +55,7 @@ jobs:
 
       #Ignore pdb files
     - name: Pack ${{ matrix.os }} - Zip
-      working-directory: ${{ matrix.project }}/bin/${{ matrix.configuration }}/netcoreapp3.1/${{ matrix.os }}/publish/
+      working-directory: ${{ matrix.project }}/bin/${{ matrix.configuration }}/net5.0/${{ matrix.os }}/publish/
       run: zip -r ${{ matrix.project }}.zip . -x \*.pdb
 
     - name: Release ${{ matrix.os }} - Upload Release Asset
@@ -64,6 +64,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.build_release.outputs.upload_url }} 
-        asset_path: ./${{ matrix.project }}/bin/${{ matrix.configuration }}/netcoreapp3.1/${{ matrix.os }}/publish/${{ matrix.project }}.zip
+        asset_path: ./${{ matrix.project }}/bin/${{ matrix.configuration }}/net5.0/${{ matrix.os }}/publish/${{ matrix.project }}.zip
         asset_name: ${{ matrix.project }}-${{ matrix.os }}.zip
         asset_content_type: application/zip
