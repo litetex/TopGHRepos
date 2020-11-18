@@ -51,7 +51,8 @@ jobs:
         
     - name: Publish ${{ matrix.os }} ${{ matrix.configuration }} - dotnet publish 
       working-directory: ${{ matrix.project }}
-      run: dotnet publish -c ${{ matrix.configuration }} -r ${{ matrix.os }} /p:PublishSingleFile=true
+      #New in NET5: PublishSingleFile procudces more than one... (IncludeNativeLibrariesForSelfExtract fixes that, https://github.com/dotnet/runtime/issues/36590#issuecomment-699257013)
+      run: dotnet publish -c ${{ matrix.configuration }} -r ${{ matrix.os }} -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
 
       #Ignore pdb files
     - name: Pack ${{ matrix.os }} - Zip
