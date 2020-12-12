@@ -1,4 +1,4 @@
-name: Check Build Nuget
+name: Build Nuget
 
 on:
   workflow_dispatch:
