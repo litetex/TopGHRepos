@@ -30,16 +30,16 @@ jobs:
         dotnet-version: 5.0.x
         
     - name: Publish ${{ matrix.os }} ${{ matrix.configuration }} - dotnet publish 
-      working-directory: ${{ matrix.project }}
+      working-directory: src/${{ matrix.project }}
       run: dotnet publish -c ${{ matrix.configuration }} -r ${{ matrix.os }} /p:PublishSingleFile=true
 
       #Ignore pdb files
     - name: Pack ${{ matrix.os }} - Zip
-      working-directory: ${{ matrix.project }}/bin/${{ matrix.configuration }}/net5.0/${{ matrix.os }}/publish/
+      working-directory: src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net5.0/${{ matrix.os }}/publish/
       run: zip -r ${{ matrix.project }}.zip . -x \*.pdb
 
     - name: Upload ${{ matrix.os }} - Upload Artifact
       uses: actions/upload-artifact@v2
       with:
         name: ${{ matrix.project }}-${{ matrix.os }}.zip
-        path: ${{ matrix.project }}/bin/${{ matrix.configuration }}/net5.0/${{ matrix.os }}/publish/${{ matrix.project }}.zip
+        path: src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net5.0/${{ matrix.os }}/publish/${{ matrix.project }}.zip
