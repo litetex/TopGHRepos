@@ -57,3 +57,14 @@ jobs:
       with:
         name: ${{ steps.nupkgvar.outputs.filename }}
         path: src/${{ matrix.project }}/bin/Release/${{ steps.nupkgvar.outputs.filename }}
+
+    - name: Find snupkg file
+      id: snupkgvar
+      working-directory: ${{ matrix.project }}/bin/Release
+      run: files=( *.snupkg) && echo ::set-output name=filename::$(echo "${files[0]}")
+      
+    - name: Upload snupkg - Upload asset
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ steps.snupkgvar.outputs.filename }}
+        path: src/${{ matrix.project }}/bin/Release/${{ steps.snupkgvar.outputs.filename }}
