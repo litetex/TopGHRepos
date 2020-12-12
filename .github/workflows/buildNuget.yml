@@ -57,10 +57,11 @@ jobs:
       with:
         name: ${{ steps.nupkgvar.outputs.filename }}
         path: src/${{ matrix.project }}/bin/Release/${{ steps.nupkgvar.outputs.filename }}
+        if-no-files-found: error
 
     - name: Find snupkg file
       id: snupkgvar
-      working-directory: ${{ matrix.project }}/bin/Release
+      working-directory: src/${{ matrix.project }}/bin/Release
       run: files=( *.snupkg) && echo ::set-output name=filename::$(echo "${files[0]}")
       
     - name: Upload snupkg - Upload asset
@@ -68,3 +69,4 @@ jobs:
       with:
         name: ${{ steps.snupkgvar.outputs.filename }}
         path: src/${{ matrix.project }}/bin/Release/${{ steps.snupkgvar.outputs.filename }}
+        if-no-files-found: error
