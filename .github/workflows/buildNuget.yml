@@ -1,0 +1,72 @@
+name: Build Nuget
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ develop ]
+    paths-ignore: 
+      - '**.md'
+  pull_request:
+    branches: [ master ]
+    paths-ignore: 
+      - '**.md'
+
+jobs:
+  generate_version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.versionprovider.outputs.version }}
+    
+    steps:
+    - name: Generate version
+      id: versionprovider
+      shell: bash
+      run: |
+        echo "::set-output name=version::$(date -u +%Y.%m.%d.%k%M)"
+
+  build_nuget:
+    runs-on: ubuntu-latest
+    needs: [generate_version]
+    strategy:
+      fail-fast: true
+      matrix:
+        project: 
+        - "TopGHRepos.Data"
+        - "TopGHRepos.Models"
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+      
+    - name: Pack
+      working-directory: src/${{ matrix.project }}
+      run: |
+        dotnet pack --configuration Release -p:PackageVersion=${{ needs.generate_version.outputs.version }}-dev -p:AssemblyVersion=${{ needs.generate_version.outputs.version }} -p:PathMap="$GITHUB_WORKSPACE=/" -p:ContinuousIntegrationBuild=true
+            
+    - name: Find nupkg file
+      id: nupkgvar
+      working-directory: src/${{ matrix.project }}/bin/Release
+      run: files=( *.nupkg) && echo ::set-output name=filename::$(echo "${files[0]}")
+      
+    - name: Upload nupkg - Upload asset
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ steps.nupkgvar.outputs.filename }}
+        path: src/${{ matrix.project }}/bin/Release/${{ steps.nupkgvar.outputs.filename }}
+        if-no-files-found: error
+
+    - name: Find snupkg file
+      id: snupkgvar
+      working-directory: src/${{ matrix.project }}/bin/Release
+      run: files=( *.snupkg) && echo ::set-output name=filename::$(echo "${files[0]}")
+      
+    - name: Upload snupkg - Upload asset
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ steps.snupkgvar.outputs.filename }}
+        path: src/${{ matrix.project }}/bin/Release/${{ steps.snupkgvar.outputs.filename }}
+        if-no-files-found: error
