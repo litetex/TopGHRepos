@@ -12,7 +12,7 @@ on:
       - '**.md'
 
 jobs: 
-  build_exec:
+  build_exe:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
