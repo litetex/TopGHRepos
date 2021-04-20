@@ -1,4 +1,4 @@
-name: Build Executable
+name: Build Executables
 
 on:
   workflow_dispatch:
@@ -31,12 +31,12 @@ jobs:
         
     - name: Publish ${{ matrix.os }} ${{ matrix.configuration }} - dotnet publish 
       working-directory: src/${{ matrix.project }}
-      run: dotnet publish -c ${{ matrix.configuration }} -r ${{ matrix.os }} /p:PublishSingleFile=true
+      run: dotnet publish -c ${{ matrix.configuration }} -r ${{ matrix.os }} -p:PublishSingleFile=true -p:DebugType=None -p:IncludeNativeLibrariesForSelfExtract=true
 
       #Ignore pdb files
     - name: Pack ${{ matrix.os }} - Zip
       working-directory: src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net5.0/${{ matrix.os }}/publish/
-      run: zip -r ${{ matrix.project }}.zip . -x \*.pdb
+      run: zip -r ${{ matrix.project }}.zip .
 
     - name: Upload ${{ matrix.os }} - Upload Artifact
       uses: actions/upload-artifact@v2
