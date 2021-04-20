@@ -12,4 +12,4 @@ Searches the top repos on GitHub by stars
 | --- | --- |
 | Check Build | [![Latest workflow runs](https://img.shields.io/github/workflow/status/litetex/TopGHRepos/Check%20Build/develop)](https://github.com/litetex/TopGHRepos/actions?query=workflow%3A%22Check+Build%22+branch%3Adevelop) |
 | Build Nuget | [![Latest workflow runs](https://img.shields.io/github/workflow/status/litetex/TopGHRepos/Build%20Nuget/develop)](https://github.com/litetex/TopGHRepos/actions?query=workflow%3A%22Build+Nuget%22+branch%3Adevelop) |
-| Build Executable | [![Latest workflow runs](https://img.shields.io/github/workflow/status/litetex/TopGHRepos/Build%20Executable/develop)](https://github.com/litetex/TopGHRepos/actions?query=workflow%3A%22Build+Executable%22+branch%3Adevelop) |
+| Build Executables | [![Latest workflow runs](https://img.shields.io/github/workflow/status/litetex/TopGHRepos/Build%20Executables/develop)](https://github.com/litetex/TopGHRepos/actions?query=workflow%3A%22Build+Executables%22+branch%3Adevelop) |
