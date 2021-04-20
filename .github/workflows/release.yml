@@ -58,7 +58,8 @@ jobs:
         
     - name: Publish ${{ matrix.os }} ${{ matrix.configuration }} - dotnet publish 
       working-directory: src/${{ matrix.project }}
-      #New in NET5: PublishSingleFile procudces more than one file... (IncludeNativeLibrariesForSelfExtract fixes that, https://github.com/dotnet/runtime/issues/36590#issuecomment-699257013)
+      # New in NET5: PublishSingleFile procudces more than one file... 
+      # (IncludeNativeLibrariesForSelfExtract fixes that, https://github.com/dotnet/runtime/issues/36590#issuecomment-699257013)
       run: dotnet publish -c ${{ matrix.configuration }} -r ${{ matrix.os }} -p:PublishSingleFile=true -p:DebugType=None -p:IncludeNativeLibrariesForSelfExtract=true -p:Version=${{ needs.init_release.outputs.version }}
 
     - name: Pack ${{ matrix.os }} - Zip
