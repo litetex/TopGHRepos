@@ -35,11 +35,11 @@ jobs:
 
       #Ignore pdb files
     - name: Pack ${{ matrix.os }} - Zip
-      working-directory: src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net5.0/${{ matrix.os }}/publish/
+      working-directory: src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net6.0/${{ matrix.os }}/publish/
       run: zip -r ${{ matrix.project }}.zip .
 
     - name: Upload ${{ matrix.os }} - Upload Artifact
       uses: actions/upload-artifact@v2
       with:
         name: ${{ matrix.project }}-${{ matrix.os }}.zip
-        path: src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net5.0/${{ matrix.os }}/publish/${{ matrix.project }}.zip
+        path: src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net6.0/${{ matrix.os }}/publish/${{ matrix.project }}.zip
