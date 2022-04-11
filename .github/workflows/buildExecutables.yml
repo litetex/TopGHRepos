@@ -39,7 +39,7 @@ jobs:
       run: zip -r ${{ matrix.project }}.zip .
 
     - name: Upload ${{ matrix.os }} - Upload Artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: ${{ matrix.project }}-${{ matrix.os }}.zip
         path: src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net6.0/${{ matrix.os }}/publish/${{ matrix.project }}.zip
