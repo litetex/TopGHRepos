@@ -21,7 +21,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
     <!-- Version management -->
-    <EFCVersion>6.0.5</EFCVersion>
+    <EFCVersion>6.0.6</EFCVersion>
   </PropertyGroup>
 
   <ItemGroup>
