@@ -220,7 +220,7 @@ namespace TopGHRepos.CMD.Tasks
       {
          lock (_lockRateLimit)
          {
-            var rateLimitInfo = GitHubClient.Miscellaneous.GetRateLimits().Result;
+            var rateLimitInfo = GitHubClient.RateLimit.GetRateLimits().Result;
 
             WriteRateLimit(rateLimitInfo);
 
@@ -234,7 +234,7 @@ namespace TopGHRepos.CMD.Tasks
                Thread.Sleep(waitMS);
                Log.Info("Waited long enough");
 
-               rateLimitInfo = GitHubClient.Miscellaneous.GetRateLimits().Result;
+               rateLimitInfo = GitHubClient.RateLimit.GetRateLimits().Result;
 
                WriteRateLimit(rateLimitInfo);
 
@@ -304,7 +304,7 @@ namespace TopGHRepos.CMD.Tasks
                      Size = repo.Size,
                      StargazersCount = repo.StargazersCount,
                      UpdatedAt = repo.UpdatedAt,
-                     WatchersCount = repo.WatchersCount
+                     WatchersCount = repo.SubscribersCount
                   };
 
                   Context.RepositoryInfos.Add(repoInfo);
