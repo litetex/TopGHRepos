@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <PackageId>Litetex.TopGHRepos.Data</PackageId>
     <Description>TopGHRepos - Data</Description>
     <Authors>litetex</Authors>
@@ -20,11 +20,13 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
+    <!-- Version management -->
+    <EFCVersion>6.0.11</EFCVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <!-- SourceLink -->
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,13 +34,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.1">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(EFCVersion)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(EFCVersion)" >
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="$(EFCVersion)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="$(EFCVersion)" />
   </ItemGroup>
 
   <ItemGroup>

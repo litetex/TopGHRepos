@@ -12,12 +12,12 @@ jobs:
        version: ${{ steps.create_version.outputs.version }}
     
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 6.0.x
       
     - name: Install dependencies
       run: dotnet restore
@@ -38,13 +38,6 @@ jobs:
       run: |
         tag_name=${{ steps.create_draft.outputs.tag_name }}
         echo "::set-output name=version::$(echo ${tag_name:1})"
-
-#    - name: Repository Dispatch
-#      uses: peter-evans/repository-dispatch@v1
-#      with:
-#        token: ${{ secrets.REPO_ACCESS_TOKEN }}
-#        event-type: release-initiated
-#        client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "upload_url": "${{ steps.create_draft.outputs.upload_url }}", "version": "${{ steps.create_version.outputs.version }}"}'
         
   build_exec:
     runs-on: ubuntu-latest
@@ -56,20 +49,21 @@ jobs:
         project: [TopGHRepos.CMD]
     
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 6.0.x
         
     - name: Publish ${{ matrix.os }} ${{ matrix.configuration }} - dotnet publish 
       working-directory: src/${{ matrix.project }}
-      #New in NET5: PublishSingleFile procudces more than one file... (IncludeNativeLibrariesForSelfExtract fixes that, https://github.com/dotnet/runtime/issues/36590#issuecomment-699257013)
-      run: dotnet publish -c ${{ matrix.configuration }} -r ${{ matrix.os }} -p:PublishSingleFile=true -p:DebugType=None -p:IncludeNativeLibrariesForSelfExtract=true -p:Version=${{ needs.init_release.outputs.version }}
+      # New in NET5: PublishSingleFile procudces more than one file... 
+      # (IncludeNativeLibrariesForSelfExtract fixes that, https://github.com/dotnet/runtime/issues/36590#issuecomment-699257013)
+      run: dotnet publish -c ${{ matrix.configuration }} -r ${{ matrix.os }} --self-contained -p:PublishSingleFile=true -p:DebugType=None -p:IncludeNativeLibrariesForSelfExtract=true -p:Version=${{ needs.init_release.outputs.version }}
 
     - name: Pack ${{ matrix.os }} - Zip
-      working-directory: src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net5.0/${{ matrix.os }}/publish/
+      working-directory: src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net6.0/${{ matrix.os }}/publish/
       run: zip -r ${{ matrix.project }}.zip .
 
     - name: Release ${{ matrix.os }} - Upload Release Asset
@@ -78,7 +72,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.init_release.outputs.upload_url }} 
-        asset_path: ./src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net5.0/${{ matrix.os }}/publish/${{ matrix.project }}.zip
+        asset_path: ./src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net6.0/${{ matrix.os }}/publish/${{ matrix.project }}.zip
         asset_name: ${{ matrix.project }}-${{ matrix.os }}.zip
         asset_content_type: application/zip
 
@@ -93,12 +87,12 @@ jobs:
         - "TopGHRepos.Models"
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 6.0.x
       
     - name: Pack
       working-directory: src/${{ matrix.project }}
@@ -111,7 +105,7 @@ jobs:
       run: files=( *.nupkg) && echo ::set-output name=filename::$(echo "${files[0]}")
       
     - name: Upload nupkg - Upload asset
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: ${{ steps.nupkgvar.outputs.filename }}
         path: src/${{ matrix.project }}/bin/Release/${{ steps.nupkgvar.outputs.filename }}
@@ -133,7 +127,7 @@ jobs:
       run: files=( *.snupkg) && echo ::set-output name=filename::$(echo "${files[0]}")
       
     - name: Upload snupkg - Upload asset
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: ${{ steps.snupkgvar.outputs.filename }}
         path: src/${{ matrix.project }}/bin/Release/${{ steps.snupkgvar.outputs.filename }}
