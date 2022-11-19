@@ -37,7 +37,7 @@ jobs:
       id: create_version
       run: |
         tag_name=${{ steps.create_draft.outputs.tag_name }}
-        echo "::set-output name=version::$(echo ${tag_name:1})"
+        echo "version=$(echo ${tag_name:1})" >> $GITHUB_OUTPUT
         
   build_exec:
     runs-on: ubuntu-latest
@@ -102,7 +102,7 @@ jobs:
     - name: Find nupkg file
       id: nupkgvar
       working-directory: src/${{ matrix.project }}/bin/Release
-      run: files=( *.nupkg) && echo ::set-output name=filename::$(echo "${files[0]}")
+      run: files=( *.nupkg) && echo "filename=${files[0]}" >> $GITHUB_OUTPUT
       
     - name: Upload nupkg - Upload asset
       uses: actions/upload-artifact@v3
@@ -124,7 +124,7 @@ jobs:
     - name: Find snupkg file
       id: snupkgvar
       working-directory: src/${{ matrix.project }}/bin/Release
-      run: files=( *.snupkg) && echo ::set-output name=filename::$(echo "${files[0]}")
+      run: files=( *.snupkg) && echo "filename=${files[0]}" >> $GITHUB_OUTPUT
       
     - name: Upload snupkg - Upload asset
       uses: actions/upload-artifact@v3
