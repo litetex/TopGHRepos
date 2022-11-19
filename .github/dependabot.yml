@@ -16,3 +16,7 @@ updates:
   schedule:
     interval: daily
   open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: "Microsoft.EntityFrameworkCore.*"
+    # This package is directly bound to the .NET version
+    versions: ">=7.0.0"
