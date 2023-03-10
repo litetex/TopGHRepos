@@ -17,7 +17,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 6.x
       
     - name: Install dependencies
       run: dotnet restore
@@ -54,7 +54,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 6.x
         
     - name: Publish ${{ matrix.os }} ${{ matrix.configuration }} - dotnet publish 
       working-directory: src/${{ matrix.project }}
@@ -67,7 +67,7 @@ jobs:
       run: zip -r ${{ matrix.project }}.zip .
 
     - name: Release ${{ matrix.os }} - Upload Release Asset
-      uses: actions/upload-release-asset@v1
+      uses: shogo82148/actions-upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -92,7 +92,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: 6.x
       
     - name: Pack
       working-directory: src/${{ matrix.project }}
@@ -112,7 +112,7 @@ jobs:
         if-no-files-found: error
 
     - name: Upload nupkg - Upload release asset
-      uses: actions/upload-release-asset@v1
+      uses: shogo82148/actions-upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -134,7 +134,7 @@ jobs:
         if-no-files-found: error
 
     - name: Upload snupkg - Upload release asset
-      uses: actions/upload-release-asset@v1
+      uses: shogo82148/actions-upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
