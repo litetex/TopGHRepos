@@ -4,7 +4,6 @@
   "packageRules": [
     {
       "description": "Stick with .NET LTS",
-      "matchPackageNames": [ "dotnet" ],
       "datasources": [
         "dotnet-version"
       ],
