@@ -31,7 +31,13 @@ jobs:
         
     - name: Publish ${{ matrix.os }} ${{ matrix.configuration }} - dotnet publish 
       working-directory: src/${{ matrix.project }}
-      run: dotnet publish -c ${{ matrix.configuration }} -r ${{ matrix.os }} --self-contained -p:PublishSingleFile=true -p:DebugType=None -p:IncludeNativeLibrariesForSelfExtract=true
+      run: |
+        dotnet publish -c ${{ matrix.configuration }} \
+        -r ${{ matrix.os }} \
+        --self-contained \
+        -p:PublishSingleFile=true \
+        -p:DebugType=None \
+        -p:IncludeNativeLibrariesForSelfExtract=true
 
       #Ignore pdb files
     - name: Pack ${{ matrix.os }} - Zip
