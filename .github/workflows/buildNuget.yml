@@ -3,7 +3,7 @@ name: Build Nuget
 on:
   workflow_dispatch:
   push:
-    branches: [ develop ]
+    branches: [ dev ]
     paths-ignore: 
       - '**.md'
   pull_request:

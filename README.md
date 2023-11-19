@@ -10,6 +10,6 @@ Searches the top repos on GitHub by stars
 ### Development [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=litetex_TopGHRepos&metric=alert_status)](https://sonarcloud.io/dashboard?id=litetex_TopGHRepos)
 | Workflow | Status |
 | --- | --- |
-| Check Build | [![Latest workflow runs](https://img.shields.io/github/actions/workflow/status/litetex/TopGHRepos/checkBuild.yml?branch=develop)](https://github.com/litetex/TopGHRepos/actions/workflows/checkBuild.yml?branch%3Adevelop) |
-| Build Nuget | [![Latest workflow runs](https://img.shields.io/github/actions/workflow/status/litetex/TopGHRepos/buildNuget.yml?branch=develop)](https://github.com/litetex/TopGHRepos/actions/workflows/buildNuget.yml?query=branch%3Adevelop) |
-| Build Executables | [![Latest workflow runs](https://img.shields.io/github/actions/workflow/status/litetex/TopGHRepos/buildExecutables.yml?branch=develop)](https://github.com/litetex/TopGHRepos/actions/workflows/buildExecutables.yml?query=branch%3Adevelop) |
+| Check Build | [![Latest workflow runs](https://img.shields.io/github/actions/workflow/status/litetex/TopGHRepos/checkBuild.yml?branch=dev)](https://github.com/litetex/TopGHRepos/actions/workflows/checkBuild.yml?branch%3Adev) |
+| Build Nuget | [![Latest workflow runs](https://img.shields.io/github/actions/workflow/status/litetex/TopGHRepos/buildNuget.yml?branch=dev)](https://github.com/litetex/TopGHRepos/actions/workflows/buildNuget.yml?query=branch%3Adev) |
+| Build Executables | [![Latest workflow runs](https://img.shields.io/github/actions/workflow/status/litetex/TopGHRepos/buildExecutables.yml?branch=dev)](https://github.com/litetex/TopGHRepos/actions/workflows/buildExecutables.yml?query=branch%3Adev) |
