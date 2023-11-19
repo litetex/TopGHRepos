@@ -17,7 +17,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.x
+        dotnet-version: 8.x
       
     - name: Install dependencies
       run: dotnet restore
@@ -54,7 +54,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.x
+        dotnet-version: 8.x
         
     - name: Publish ${{ matrix.os }} ${{ matrix.configuration }} - dotnet publish 
       working-directory: src/${{ matrix.project }}
@@ -63,7 +63,7 @@ jobs:
       run: dotnet publish -c ${{ matrix.configuration }} -r ${{ matrix.os }} --self-contained -p:PublishSingleFile=true -p:DebugType=None -p:IncludeNativeLibrariesForSelfExtract=true -p:Version=${{ needs.init_release.outputs.version }}
 
     - name: Pack ${{ matrix.os }} - Zip
-      working-directory: src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net6.0/${{ matrix.os }}/publish/
+      working-directory: src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net8.0/${{ matrix.os }}/publish/
       run: zip -r ${{ matrix.project }}.zip .
 
     - name: Release ${{ matrix.os }} - Upload Release Asset
@@ -72,7 +72,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.init_release.outputs.upload_url }} 
-        asset_path: ./src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net6.0/${{ matrix.os }}/publish/${{ matrix.project }}.zip
+        asset_path: ./src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net8.0/${{ matrix.os }}/publish/${{ matrix.project }}.zip
         asset_name: ${{ matrix.project }}-${{ matrix.os }}.zip
         asset_content_type: application/zip
 
@@ -92,7 +92,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.x
+        dotnet-version: 8.x
       
     - name: Pack
       working-directory: src/${{ matrix.project }}

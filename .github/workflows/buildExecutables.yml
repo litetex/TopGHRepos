@@ -27,7 +27,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.x
+        dotnet-version: 8.x
         
     - name: Publish ${{ matrix.os }} ${{ matrix.configuration }} - dotnet publish 
       working-directory: src/${{ matrix.project }}
@@ -35,11 +35,11 @@ jobs:
 
       #Ignore pdb files
     - name: Pack ${{ matrix.os }} - Zip
-      working-directory: src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net6.0/${{ matrix.os }}/publish/
+      working-directory: src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net8.0/${{ matrix.os }}/publish/
       run: zip -r ${{ matrix.project }}.zip .
 
     - name: Upload ${{ matrix.os }} - Upload Artifact
       uses: actions/upload-artifact@v3
       with:
         name: ${{ matrix.project }}-${{ matrix.os }}.zip
-        path: src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net6.0/${{ matrix.os }}/publish/${{ matrix.project }}.zip
+        path: src/${{ matrix.project }}/bin/${{ matrix.configuration }}/net8.0/${{ matrix.os }}/publish/${{ matrix.project }}.zip
