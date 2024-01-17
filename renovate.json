@@ -7,6 +7,9 @@
       "datasources": [
         "dotnet-version"
       ],
+      "ignorePaths": [
+        "global.json"
+      ],
       "allowedVersions": "<9"
     },
     {
