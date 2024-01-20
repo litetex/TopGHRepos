@@ -21,6 +21,9 @@
       "datasources": [
         "nuget"
       ],
+      "ignorePaths": [
+        "(^|/)global\.json$"
+      ],
       "allowedVersions": "<9"
     }
   ]
