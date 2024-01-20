@@ -1,13 +1,15 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "rebaseWhen": "behind-base-branch",
+  "ignorePaths": [
+    "global.json"
+  ],
   "packageRules": [
     {
       "description": "Stick with .NET LTS",
       "datasources": [
         "dotnet-version"
       ],
-      "matchUpdateTypes": ["major"],
       "allowedVersions": "<9"
     },
     {
