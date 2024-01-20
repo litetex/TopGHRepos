@@ -228,7 +228,7 @@ namespace TopGHRepos.CMD.Tasks
 
             while (searchRateLimit.Remaining <= 1)
             {
-               var waitMS = Math.Max((int)(searchRateLimit.Reset - DateTimeOffset.Now).TotalMilliseconds + 5000, 5000);
+               var waitMS = Math.Max((int)(searchRateLimit.Reset - DateTimeOffset.Now).TotalMilliseconds + 1000, 1000);
                Log.Info($"Ratelimit for seach exceeded! Waiting till {searchRateLimit.Reset} (will wait for ~{waitMS} ms)");
 
                Thread.Sleep(waitMS);
