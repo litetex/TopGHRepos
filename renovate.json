@@ -9,8 +9,7 @@
       ],
       "ignorePaths": [
         "(^|/)global\.json$"
-      ],
-      "allowedVersions": "<9"
+      ]
     },
     {
       "description": "Stick with .NET LTS",
