@@ -253,7 +253,7 @@ namespace TopGHRepos.CMD.Tasks
 
       private void TrySetLastRepo(int currentBatch, int currentPage, SearchRepositoryResult searchResult, Action<Repository> onLastRepo)
       {
-         var lastRepo = searchResult.Items.Last();
+         var lastRepo = searchResult.Items.LastOrDefault((Repository)null);
          if (lastRepo == null)
             Log.Warn($"Unable to find last repo for search-page ({currentPage}) of batch #{currentBatch} skipping it");
          else
