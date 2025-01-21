@@ -23,6 +23,17 @@
         "nuget"
       ],
       "allowedVersions": "<9"
+    },
+    {
+      "description": "Group EntityFrameworkCore",
+      "matchPackagePatterns": [
+        "^Microsoft.EntityFrameworkCore",
+        "^dotnet-ef"
+      ],
+      "datasources": [
+        "nuget"
+      ],
+      "groupName": "EntityFrameworkCore"
     }
   ]
 }
