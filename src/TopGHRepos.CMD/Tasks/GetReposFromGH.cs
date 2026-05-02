@@ -84,29 +84,29 @@ namespace TopGHRepos.CMD.Tasks
 
          var databaseProcessorTasks = new List<Task>();
 
-         Log.Info($"Doing inital search-page (1) of batch #{currentBatch}");
-         var initalSearchResult = await Search(GetRepositoriesRequest(0, minStars), currentBatch, 1);
+         Log.Info($"Doing initial search-page (1) of batch #{currentBatch}");
+         var initialSearchResult = await Search(GetRepositoriesRequest(0, minStars), currentBatch, 1);
 
-         TrySetLastRepo(currentBatch, 1, initalSearchResult, lastRepo => lastBatchRepoStars = lastRepo.StargazersCount);
+         TrySetLastRepo(currentBatch, 1, initialSearchResult, lastRepo => lastBatchRepoStars = lastRepo.StargazersCount);
 
-         var initalDBProcessorTask = Task.Run(() =>
+         var initialDBProcessorTask = Task.Run(() =>
          {
             try
             {
-               ProcessForDB(currentBatch, 0, initalSearchResult);
+               ProcessForDB(currentBatch, 0, initialSearchResult);
             }
             catch(Exception ex)
             {
-               Log.Error($"DB-proccessing failed for search-page ({1}) of batch #{currentBatch} Result={initalSearchResult}", ex);
+               Log.Error($"DB-processing failed for search-page ({1}) of batch #{currentBatch} Result={initialSearchResult}", ex);
             }
          });
-         databaseProcessorTasks.Add(initalDBProcessorTask);
+         databaseProcessorTasks.Add(initialDBProcessorTask);
 
-         Log.Info($"Inital search-page (1) returned: items={initalSearchResult.Items.Count()}, totalItems={initalSearchResult.TotalCount}");
-         totalSearchedBatchItems += initalSearchResult.Items.Count();
-         var lastResult = initalSearchResult;
+         Log.Info($"Initial search-page (1) returned: items={initialSearchResult.Items.Count}, totalItems={initialSearchResult.TotalCount}");
+         totalSearchedBatchItems += initialSearchResult.Items.Count;
+         var lastResult = initialSearchResult;
 
-         int spanningSearchTasks = Math.Max(Math.Min((int)Math.Ceiling((initalSearchResult.TotalCount - 100) / 100.0), 9), 0);
+         int spanningSearchTasks = Math.Max(Math.Min((int)Math.Ceiling((initialSearchResult.TotalCount - 100) / 100.0), 9), 0);
          Log.Info($"Will span {spanningSearchTasks} parallel searches");
 
          var searchTasks = new List<Task>();
@@ -133,7 +133,7 @@ namespace TopGHRepos.CMD.Tasks
                      }
                      catch(Exception ex)
                      {
-                        Log.Error($"DB-proccessing failed for search-page ({currentSearchPage}) of batch #{currentBatch}; Result={searchResult}", ex);
+                        Log.Error($"DB-processing failed for search-page ({currentSearchPage}) of batch #{currentBatch}; Result={searchResult}", ex);
                      }
                   }));
 
@@ -182,10 +182,10 @@ namespace TopGHRepos.CMD.Tasks
          {
             throw new InvalidOperationException($"Last Repo of Batch[Stars={lastBatchRepoStars}] returned less stars than inputted[{minStars}]");
          }
-         else if(lastBatchRepoStars == minStars)
+         if(lastBatchRepoStars == minStars)
          {
             Log.Warn($"Got more than 1000 Repos having the same star-count '{lastBatchRepoStars}' since last refitting query");
-            Log.Warn($"Will count +1 to not get the same search results again (may lose some repos) ...");
+            Log.Warn("Will count +1 to not get the same search results again (may lose some repos) ...");
             lastBatchRepoStars++;
          }
 
@@ -229,7 +229,7 @@ namespace TopGHRepos.CMD.Tasks
             while (searchRateLimit.Remaining <= 1)
             {
                var waitMS = Math.Max((int)(searchRateLimit.Reset - DateTimeOffset.Now).TotalMilliseconds + 1000, 1000);
-               Log.Info($"Ratelimit for seach exceeded! Waiting till {searchRateLimit.Reset} (will wait for ~{waitMS} ms)");
+               Log.Info($"RateLimit for search exceeded! Waiting till {searchRateLimit.Reset} (will wait for ~{waitMS} ms)");
 
                Thread.Sleep(waitMS);
                Log.Info("Waited long enough");
