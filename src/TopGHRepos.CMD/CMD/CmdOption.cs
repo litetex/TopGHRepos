@@ -13,17 +13,23 @@ namespace TopGHRepos.CMD.CMD
       [Option("GITHUB_PAT")]
       public string GITHUB_PAT { get; set; } = null;
 
-      [Option("minstars")]
+      [Option("minStars")]
       public int? MinStars { get; set; }
 
-      [Option("maxstars")]
+      [Option("maxStars")]
       public int? MaxStars { get; set; }
 
-      [Option("searchwaitinterval")]
+      [Option("searchWaitInterval")]
       public int? SearchWaitInterval { get; set; }
+      
+      [Option("initialExpectedItemCount")]
+      public int? InitialExpectedItemCount { get; set; }
+      
+      [Option("initialBatchSearchExpectedItemRetryCount")]
+      public int? InitialBatchSearchExpectedItemRetryCount { get; set; }
 
-      [Option("sqllitefile")]
-      public string SQLLiteOutputFile { get; set; }
+      [Option("sqliteFile")]
+      public string SQLiteFile { get; set; }
 
    }
 }

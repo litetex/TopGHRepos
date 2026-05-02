@@ -1,14 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics.Contracts;
 using System.IO;
-using System.Linq;
-using System.Text;
 using TopGHRepos.CMD.CMD;
 using TopGHRepos.CMD.Config;
-using TopGHRepos.Data;
-using TopGHRepos.Models.Entities;
 
 namespace TopGHRepos.CMD
 {
@@ -46,10 +40,10 @@ namespace TopGHRepos.CMD
             Config.GitHubPAT = CmdOption.GITHUB_PAT;
          }
 
-         if(!string.IsNullOrWhiteSpace(CmdOption.SQLLiteOutputFile))
+         if(!string.IsNullOrWhiteSpace(CmdOption.SQLiteFile))
          {
-            Log.Info($"SetInp: {nameof(Config.SQLLiteOutputFile)}='{CmdOption.SQLLiteOutputFile}'");
-            Config.SQLLiteOutputFile = CmdOption.SQLLiteOutputFile;
+            Log.Info($"SetInp: {nameof(Config.SQLiteFile)}='{CmdOption.SQLiteFile}'");
+            Config.SQLiteFile = CmdOption.SQLiteFile;
          }
 
          if (CmdOption.MinStars != null)
@@ -68,6 +62,18 @@ namespace TopGHRepos.CMD
          {
             Log.Info($"SetInp: {nameof(Config.SearchWaitInterval)}='{CmdOption.SearchWaitInterval}'");
             Config.SearchWaitInterval = CmdOption.SearchWaitInterval.Value;
+         }
+         
+         if (CmdOption.InitialExpectedItemCount != null)
+         {
+            Log.Info($"SetInp: {nameof(Config.InitialExpectedItemCount)}='{CmdOption.InitialExpectedItemCount}'");
+            Config.InitialExpectedItemCount = CmdOption.InitialExpectedItemCount.Value;
+         }
+         
+         if (CmdOption.InitialBatchSearchExpectedItemRetryCount != null)
+         {
+            Log.Info($"SetInp: {nameof(Config.InitialBatchSearchExpectedItemRetryCount)}='{CmdOption.InitialBatchSearchExpectedItemRetryCount}'");
+            Config.InitialBatchSearchExpectedItemRetryCount = CmdOption.InitialBatchSearchExpectedItemRetryCount.Value;
          }
       }
 

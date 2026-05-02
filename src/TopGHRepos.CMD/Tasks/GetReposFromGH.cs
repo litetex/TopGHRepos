@@ -1,10 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Query.Internal;
-using Octokit;
+﻿using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using TopGHRepos.CMD.Config;
@@ -62,21 +59,30 @@ namespace TopGHRepos.CMD.Tasks
       {
          var runStart = DateTimeOffset.Now;
          var lastBatchFinished = runStart;
-
-         int stars = Config.SearchMinStars;
+         
+         BatchResult lastBatchResult = new BatchResult(Config.SearchMinStars, Config.InitialExpectedItemCount);
          int batchNum = 0;
          do
          {
-            stars = await DoSearchBatch(++batchNum, stars, runStart, lastBatchFinished);
+            lastBatchResult = await DoSearchBatch(++batchNum, lastBatchResult, runStart, lastBatchFinished);
             lastBatchFinished = DateTimeOffset.Now;
-         } while (stars > 0);
+         } while (lastBatchResult.Stars > 0);
 
          Log.Info($"Total processed items: {TotalProcessedItems}");
          Log.Info($"Total processed unique repos: {AlreadyProcessedRepoIds.Count}");
       }
-
-      public async Task<int> DoSearchBatch(int currentBatch, int minStars, DateTimeOffset runStart, DateTimeOffset lastBatchFinished)
+      
+      public record BatchResult(
+         int Stars,
+         int ExpectedItemsLeft
+      )
       {
+      }
+
+      public async Task<BatchResult> DoSearchBatch(int currentBatch, BatchResult lastBatchResult, DateTimeOffset runStart, DateTimeOffset lastBatchFinished)
+      {
+         int minStars = lastBatchResult.Stars;
+         
          Log.Info($"Starting batch #{currentBatch}; with MinStars >= {minStars}");
          object lockTotalProcessedItems = new object();
          int lastBatchRepoStars = -1;
@@ -84,29 +90,46 @@ namespace TopGHRepos.CMD.Tasks
 
          var databaseProcessorTasks = new List<Task>();
 
-         Log.Info($"Doing inital search-page (1) of batch #{currentBatch}");
-         var initalSearchResult = await Search(GetRepositoriesRequest(0, minStars), currentBatch, 1);
+         Log.Info($"Doing initial search-page (1) of batch #{currentBatch}");
+         SearchRepositoryResult initialSearchResult = null;
+         int initialRetryCount = 0;
+         do
+         {
+            if (initialRetryCount > 1)
+            {
+               Log.Warn($"Retrying[{initialRetryCount}] initial search as it yielded no results: " +
+                        $"[TotalCount=${initialSearchResult?.TotalCount}," +
+                        $"LastBatch.ExpectedItemsLeft=${lastBatchResult.ExpectedItemsLeft}," +
+                        $"TotalProcessedItems=${TotalProcessedItems}]");
+               Thread.Sleep(initialRetryCount * 5_000);
+            }
+            
+            initialSearchResult = await Search(GetRepositoriesRequest(0, minStars), currentBatch, 1);
+            initialRetryCount++;
+         } while (initialSearchResult.Items.Count == 0 
+                  && lastBatchResult.ExpectedItemsLeft > Config.InitialBatchSearchExpectedItemRetryCount 
+                  && initialRetryCount <= 3);
 
-         TrySetLastRepo(currentBatch, 1, initalSearchResult, lastRepo => lastBatchRepoStars = lastRepo.StargazersCount);
+         TrySetLastRepo(currentBatch, 1, initialSearchResult, lastRepo => lastBatchRepoStars = lastRepo.StargazersCount);
 
-         var initalDBProcessorTask = Task.Run(() =>
+         var initialDbProcessorTask = Task.Run(() =>
          {
             try
             {
-               ProcessForDB(currentBatch, 0, initalSearchResult);
+               ProcessForDB(currentBatch, 0, initialSearchResult);
             }
             catch(Exception ex)
             {
-               Log.Error($"DB-proccessing failed for search-page ({1}) of batch #{currentBatch} Result={initalSearchResult}", ex);
+               Log.Error($"DB-processing failed for search-page ({1}) of batch #{currentBatch} Result={initialSearchResult}", ex);
             }
          });
-         databaseProcessorTasks.Add(initalDBProcessorTask);
+         databaseProcessorTasks.Add(initialDbProcessorTask);
 
-         Log.Info($"Inital search-page (1) returned: items={initalSearchResult.Items.Count()}, totalItems={initalSearchResult.TotalCount}");
-         totalSearchedBatchItems += initalSearchResult.Items.Count();
-         var lastResult = initalSearchResult;
+         Log.Info($"Initial search-page (1) returned: items={initialSearchResult.Items.Count}, totalItems={initialSearchResult.TotalCount}");
+         totalSearchedBatchItems += initialSearchResult.Items.Count;
+         var lastResult = initialSearchResult;
 
-         int spanningSearchTasks = Math.Max(Math.Min((int)Math.Ceiling((initalSearchResult.TotalCount - 100) / 100.0), 9), 0);
+         int spanningSearchTasks = Math.Max(Math.Min((int)Math.Ceiling((initialSearchResult.TotalCount - 100) / 100.0), 9), 0);
          Log.Info($"Will span {spanningSearchTasks} parallel searches");
 
          var searchTasks = new List<Task>();
@@ -133,7 +156,7 @@ namespace TopGHRepos.CMD.Tasks
                      }
                      catch(Exception ex)
                      {
-                        Log.Error($"DB-proccessing failed for search-page ({currentSearchPage}) of batch #{currentBatch}; Result={searchResult}", ex);
+                        Log.Error($"DB-processing failed for search-page ({currentSearchPage}) of batch #{currentBatch}; Result={searchResult}", ex);
                      }
                   }));
 
@@ -166,7 +189,7 @@ namespace TopGHRepos.CMD.Tasks
          Log.Info($"Processed items of #{currentBatch}: {totalSearchedBatchItems}");
 
          TotalProcessedItems += totalSearchedBatchItems;
-
+         
          ReportProgress(
             runStart, 
             lastBatchFinished, 
@@ -174,24 +197,25 @@ namespace TopGHRepos.CMD.Tasks
             AlreadyProcessedRepoIds.Count,
             lastResult.TotalCount,
             totalSearchedBatchItems);
-
+         
+         int expectedItemsLeft = lastResult.TotalCount - totalSearchedBatchItems;
          if (totalSearchedBatchItems >= lastResult.TotalCount || lastBatchRepoStars == -1)
-            return -1;
+            return new BatchResult(-1, expectedItemsLeft);
 
          if(lastBatchRepoStars < minStars)
          {
             throw new InvalidOperationException($"Last Repo of Batch[Stars={lastBatchRepoStars}] returned less stars than inputted[{minStars}]");
          }
-         else if(lastBatchRepoStars == minStars)
+         if(lastBatchRepoStars == minStars)
          {
             Log.Warn($"Got more than 1000 Repos having the same star-count '{lastBatchRepoStars}' since last refitting query");
-            Log.Warn($"Will count +1 to not get the same search results again (may lose some repos) ...");
+            Log.Warn("Will count +1 to not get the same search results again (may lose some repos) ...");
             lastBatchRepoStars++;
          }
 
          Context.DetachAllEntities();
 
-         return lastBatchRepoStars;
+         return new BatchResult(lastBatchRepoStars, expectedItemsLeft);
       }
 
       private SearchRepositoriesRequest GetRepositoriesRequest(int page, int minStars)
@@ -229,7 +253,7 @@ namespace TopGHRepos.CMD.Tasks
             while (searchRateLimit.Remaining <= 1)
             {
                var waitMS = Math.Max((int)(searchRateLimit.Reset - DateTimeOffset.Now).TotalMilliseconds + 1000, 1000);
-               Log.Info($"Ratelimit for seach exceeded! Waiting till {searchRateLimit.Reset} (will wait for ~{waitMS} ms)");
+               Log.Info($"RateLimit for search exceeded! Waiting till {searchRateLimit.Reset} (will wait for ~{waitMS} ms)");
 
                Thread.Sleep(waitMS);
                Log.Info("Waited long enough");
